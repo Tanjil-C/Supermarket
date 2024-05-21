@@ -1,0 +1,31 @@
+﻿@model Category
+@{
+    ViewData["Title"] = $"Edit Category: {Model.Name}"; // This is the text in the tab bar
+}
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category Id</th>
+                <th>Category Name</th>
+                <th>Category Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.Id</td>
+                <td>@Model.Name</td>
+                <td>@Model.Description</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>
+        Not Found
+    </h3>
+}
+
