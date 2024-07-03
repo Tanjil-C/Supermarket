@@ -18,7 +18,11 @@ namespace Supermarket.Data
         {
             // simulating a DB, a DB returns copies of the requested data
             List<Category> copyOfCategories = _categories;
-            return new Response<List<Category>>(copyOfCategories);
+
+            Response<List<Category>> data = new Response<List<Category>>(copyOfCategories);
+            data.Success = true;
+
+            return data;
         }
 
         public static Response<Category> AddCategory(Category category)
@@ -27,15 +31,18 @@ namespace Supermarket.Data
 
             try
             {
-                var maxId = _categories.Max(x => category.Id);
+                var maxId = 0;
+                maxId = _categories.Max(c => c.Id);
 
                 category.Id = maxId + 1;
 
-                return new Response<Category>(category);
+                _categories.Add(category);
+
+                return new Response<Category>(category) { Success = true };
             }
             catch (Exception ex)
             {
-                return new Response<Category>(category){Message = "Failed Add Category" };
+                return new Response<Category>(category) { Message = "Failed Add Category", Success = false };
             }
 
         }
@@ -48,10 +55,10 @@ namespace Supermarket.Data
 
             if (category == null)
             {
-                return new Response<Category>() { Message = "This category was not found. " }; 
+                return new Response<Category>() { Message = "This category was not found. ", Success = false };
             }
 
-            return new Response<Category>(copy);
+            return new Response<Category>(copy) { Success = true };
         }
 
         public static Response<Category>? RemoveCategory(int id)
@@ -62,12 +69,41 @@ namespace Supermarket.Data
             {
                 _categories.Remove(category);
 
-                return new Response<Category>() { Message = $"Removal of category {category.Name} was sucessful. "};
+                return new Response<Category>() { Message = $"Removal of category {category.Name} was sucessful. ", Success = true };
 
             }
 
-            return null; 
+            return new Response<Category>() { Success = false } ;
         }
 
+        public static Response<Category>? UpdateCategory(Category category)
+        {
+
+            try
+            {
+                var copyId = _categories.FindIndex(x => x.Id == category.Id); // "=" is assigning and "==" is a bool comparison
+
+                _categories[copyId] = category;
+
+                if (_categories.Contains(category))
+                {
+                    return new Response<Category>(category)
+                    {
+                        Success = true
+                    };
+                }
+
+                return new Response<Category>() { Success = false };
+
+                
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error occured in repository updating category. ", ex);
+            }
+            
+
+        
+        }
     }
 }

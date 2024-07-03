@@ -8,20 +8,79 @@ namespace Supermarket.Controllers
     {
         public IActionResult Index()
         {
-            List<Category> categories = CategoriesRepository.GetAllCategories().Data;
+            var response = CategoriesRepository.GetAllCategories();
 
-            if (categories == null || categories.Count == 0 )
+
+            if (response.Success != true)
             {
-                return NotFound();
+                return NoContent();
             }
-            return View(categories);
+            
+            return View(response.Data);
         }
 
         public IActionResult Edit(int id)
         {
+            ViewBag.Action = "Edit";
+
             var category = CategoriesRepository.GetCategoryById(id).Data;
 
             return View(category);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = CategoriesRepository.UpdateCategory(category);
+
+                if (response.Success != true)
+                {
+                    return NoContent();
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(category);
+        }
+
+        public IActionResult Add()
+        {
+            ViewBag.Action = "Add";
+
+            Category model = new Category();
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Add(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = CategoriesRepository.AddCategory(category);
+
+                if (response.Success == true)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            return View(category);
+        }
+
+        public IActionResult Delete(int id)
+        {
+            CategoriesRepository.RemoveCategory(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public Category GetCategoryById(int id)
+        {
+            return CategoriesRepository.GetCategoryById(id).Data;
         }
     }
 }

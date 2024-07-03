@@ -1,0 +1,100 @@
+﻿@model Product
+@{
+    string action = ViewBag.Action ?? string.Empty; // Retrieve the action from ViewBag
+}
+
+<form method="post" asp-controller="products" asp-action="@action">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <!-- Product Name -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label asp-for="Name" class="col-form-label"></label>
+        </div>
+        <div class="col-md-6">
+            <input type="text" asp-for="Name" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <span class="text-danger" asp-validation-for="Name"></span>
+        </div>
+    </div>
+
+    <!-- Product Price -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label asp-for="Price" class="col-form-label"></label>
+        </div>
+        <div class="col-md-6">
+            <input type="text" asp-for="Price" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <span class="text-danger" asp-validation-for="Price"></span>
+        </div>
+    </div>
+
+    <!-- Product Quantity -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label asp-for="Quantity" class="col-form-label"></label>
+        </div>
+        <div class="col-md-6">
+            <input type="number" asp-for="Quantity" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <span class="text-danger" asp-validation-for="Quantity"></span>
+        </div>
+    </div>
+
+    <!-- Product Category -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label asp-for="Category.Id" class="col-form-label">Category</label>
+        </div>
+        <div class="col-md-6">
+            <select asp-for="Category.Id" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-control"></select>
+        </div>
+        <div class="col-md-4">
+            <span asp-validation-for="Category.Id" class="text-danger"></span>
+        </div>
+
+    </div>
+
+
+    <!-- Submit Button -->
+    @if (action.ToLower() == "edit")
+    {
+        <div class="row mb-3">
+            <div class="col-md-12 text-end">
+                <input type="submit" class="btn btn-primary" value="Save" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row mb-3">
+            <div class="col-md-12 text-end">
+                <input type="submit" class="btn btn-primary" value="Add" />
+            </div>
+        </div>
+    }
+</form>
+
+<!-- Hidden fields for Category properties -->
+<input type="hidden" asp-for="Category.Name" id="Category_Name" />
+<input type="hidden" asp-for="Category.Description" id="Category_Description" />
+
+@section Scripts {
+    <script>
+        document.getElementById('Category_Id').addEventListener('change', function () {
+            var categoryId = this.value;
+            var url = '@Url.Action("GetCategoryById", "Categories")' + '?id=' + categoryId;
+            fetch(url)
+                .then(response => response.json())
+                .then(category => {
+                    // Assuming 'category' object includes all needed properties
+                    document.getElementById('Category_Name').value = category.Name; // Set name
+                    document.getElementById('Category_Description').value = category.Description; // Set description
+                })
+                .catch(error => console.error('Error fetching category details:', error));
+        });
+    </script>
+}
