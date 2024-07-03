@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Supermarket.Data;
 using Supermarket.Models;
 
@@ -14,23 +15,30 @@ namespace Supermarket.Controllers
 
         public IActionResult Add()
         {
-            ViewBag.Categories = CategoriesRepository.GetAllCategories().Data; // Ensure this method call is successful and returns data
-            ViewBag.Action = "Add";
-            return View(new Product());
+            ViewBag.Categories = CategoriesRepository.GetAllCategories().Data;
+            ProductViewModel viewModel = new ProductViewModel();
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Add(Product product)
+        public IActionResult Add(ProductViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                ViewBag.Categories = CategoriesRepository.GetAllCategories().Data;
-                ViewBag.Action = "Add";
-                return View(product);
+                var category = CategoriesRepository.GetCategoryById(model.CategoryId).Data;
+                var product = new Product
+                {
+                    Name = model.Name,
+                    Price = model.Price,
+                    Quantity = model.Quantity,
+                    CategoryId = model.CategoryId,
+                    Category = category
+                };
+                ProductsRepository.Add(product);
+                return RedirectToAction(nameof(Index));
             }
-
-            ProductsRepository.Add(product);
-            return RedirectToAction(nameof(Index));
+            model.AvailableCategories = new SelectList(CategoriesRepository.GetAllCategories().Data, "Id", "Name");
+            return View(model);
         }
 
         public IActionResult Delete(int id)
@@ -45,14 +53,34 @@ namespace Supermarket.Controllers
             ViewBag.Categories = CategoriesRepository.GetAllCategories().Data;
             ViewBag.Action = "Edit";
             var product = ProductsRepository.GetById(id);
-            return View(product);
+            ProductViewModel viewModel = new ProductViewModel() { 
+                
+                Id = id,
+                Name = product.Name,
+                Price = product.Price,
+                Quantity = product.Quantity,    
+                CategoryId = product.CategoryId,
+
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Edit(Product product)
+        public IActionResult Edit(ProductViewModel productViewModel)
         {
-            var category = CategoriesRepository.GetCategoryById(product.Category.Id).Data;
-            product.Category = category;  // Reassign the category based on ID
+            var category = CategoriesRepository.GetCategoryById(productViewModel.Id).Data;
+
+            var product = new Product()
+            {
+                Id = productViewModel.Id,
+                Name = productViewModel.Name,
+                Price = productViewModel.Price,
+                Quantity = productViewModel.Quantity,
+                CategoryId = productViewModel.CategoryId,
+                Category = category
+            };
+
             ProductsRepository.Update(product);
             return RedirectToAction(nameof(Index));
         }
