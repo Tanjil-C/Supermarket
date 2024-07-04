@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Supermarket.Data;
 using Supermarket.Models;
+using System.Reflection;
 
 namespace Supermarket.Controllers
 {
@@ -15,8 +16,9 @@ namespace Supermarket.Controllers
 
         public IActionResult Add()
         {
-            ViewBag.Categories = CategoriesRepository.GetAllCategories().Data;
             ProductViewModel viewModel = new ProductViewModel();
+            ViewBag.Categories = new SelectList(CategoriesRepository.GetAllCategories().Data, "Id", "Name");
+            ViewBag.Action = "Add";
             return View(viewModel);
         }
 
@@ -37,7 +39,7 @@ namespace Supermarket.Controllers
                 ProductsRepository.Add(product);
                 return RedirectToAction(nameof(Index));
             }
-            model.AvailableCategories = new SelectList(CategoriesRepository.GetAllCategories().Data, "Id", "Name");
+            ViewBag.Categories = new SelectList(CategoriesRepository.GetAllCategories().Data, "Id", "Name");
             return View(model);
         }
 
@@ -50,7 +52,7 @@ namespace Supermarket.Controllers
 
         public IActionResult Edit(int id)
         {
-            ViewBag.Categories = CategoriesRepository.GetAllCategories().Data;
+            ViewBag.Categories = new SelectList(CategoriesRepository.GetAllCategories().Data, "Id", "Name");
             ViewBag.Action = "Edit";
             var product = ProductsRepository.GetById(id);
             ProductViewModel viewModel = new ProductViewModel() { 
@@ -69,7 +71,7 @@ namespace Supermarket.Controllers
         [HttpPost]
         public IActionResult Edit(ProductViewModel productViewModel)
         {
-            var category = CategoriesRepository.GetCategoryById(productViewModel.Id).Data;
+            var category = CategoriesRepository.GetCategoryById(productViewModel.CategoryId).Data;
 
             var product = new Product()
             {
@@ -83,6 +85,15 @@ namespace Supermarket.Controllers
 
             ProductsRepository.Update(product);
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult ProductsByCategoryPartial(int categoryId)
+        {
+            var products = ProductsRepository.GetProductsByCategoryId(categoryId);
+
+            ViewBag.Cashier = "True";
+
+            return PartialView("_Products",products);
         }
 
     }

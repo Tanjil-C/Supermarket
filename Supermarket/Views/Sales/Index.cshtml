@@ -1,0 +1,50 @@
+﻿@model SalesViewModel
+@section Title{
+    <div class="row">
+        <div class="col-7"><h3>Cashier's Console</h3></div>
+        <div class="col-2"><label for="cashier">Cashier Name:</label></div>
+        <div class="col-3">
+            @* Display Cashiers Name here *@
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-4">
+        @*Category Selection*@
+        <select asp-for="SelectedCategoryId" class="form-control">
+            <option>-- Please Select --</option>
+            @if (Model.Categories != null && Model.Categories.Count() > 0)
+            {
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            }
+        </select>
+        <br/>
+        <div id="productsPartial">
+            @*Product List*@
+        </div>
+        <br/>
+        <div>
+            @*Product Details*@
+        </div>
+        @*Sales Form*@
+    </div>
+    <div class="col">
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#SelectedCategoryId").on("change", function () {
+                var categoryId = $(this).val(); // Store the category ID in a variable
+                $("#productsPartial").load("/products/ProductsByCategoryPartial", { categoryId: categoryId });
+            });
+        });
+    </script>
+}
