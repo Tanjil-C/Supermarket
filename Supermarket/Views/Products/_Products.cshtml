@@ -8,45 +8,82 @@
     <h1>Categories</h1>
 }
 
-<div"
-
-@if (Model != null && Model.Count > 0)
+@if (ViewBag.Role != "Cashier")
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr>
-                    <td>@product.Id</td>
-                    <td>@product.Name</td>
-                    <td>$@product.Price.ToString("0.00")</td>
-                    <td>@product.Quantity</td>
-                    <td>@product.Category.Name</td>
-                    <td>
-                        <a class="btn btn-primary" href="@Url.Action("Edit", "Products", new { id = product.Id })">Edit</a>
-                        <a class="btn btn-danger" href="@Url.Action("Delete", "Products", new { id = product.Id })" onclick="return confirmDelete()">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
 
-    <a class="btn btn-primary" href="@Url.Action("Add", "Products")">Add New Product</a>
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr class ="product-row">
+                        <td class="product-id">@product.Id</td>
+                        <td>@product.Name</td>
+                        <td>$@product.Price.ToString("0.00")</td>
+                        <td>@product.Quantity</td>
+                        <td>@product.Category.Name</td>
+                        <td>
+                            <a class="btn btn-primary" href="@Url.Action("Edit", "Products", new { id = product.Id })">Edit</a>
+                            <a class="btn btn-danger" href="@Url.Action("Delete", "Products", new { id = product.Id })" onclick="return confirmDelete()">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <a class="btn btn-primary" href="@Url.Action("Add", "Products")">Add New Product</a>
+    }
+    else
+    {
+        <p>No products available.</p>
+    }
 }
 else
 {
-    <p>No products available.</p>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr class="product-row">
+                        <td class="product-id">@product.Id</td>
+                        <td>@product.Name</td>
+                        <td>£@product.Price.ToString("0.00")</td>
+                        <td>@product.Quantity</td>
+                        <td>@product.Category.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No products available.</p>
+    }
 }
+
 
 @section Scripts {
     <script>

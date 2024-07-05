@@ -27,7 +27,7 @@
             @*Product List*@
         </div>
         <br/>
-        <div>
+        <div id="productDetailsPartial">
             @*Product Details*@
         </div>
         @*Sales Form*@
@@ -45,6 +45,20 @@
                 var categoryId = $(this).val(); // Store the category ID in a variable
                 $("#productsPartial").load("/products/ProductsByCategoryPartial", { categoryId: categoryId });
             });
+            // Handle product selection
+
+            $("#productsPartial").on("click", ".product-row", function () {
+                $(".product-row").removeClass("highlight");
+                $(".product-row").on("change", function(){
+                    $("#productDetailsPartial").remove();
+                });
+
+                $(this).addClass("highlight");
+
+                var productId = $(this).find(".product-id").text(); 
+                $("#productDetailsPartial").load("/products/GetProductPartial", { id: productId });
+            });
         });
+
     </script>
 }

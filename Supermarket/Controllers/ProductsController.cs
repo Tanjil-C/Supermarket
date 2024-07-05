@@ -91,9 +91,15 @@ namespace Supermarket.Controllers
         {
             var products = ProductsRepository.GetProductsByCategoryId(categoryId);
 
-            ViewBag.Cashier = "True";
+            ViewBag.Role = "Cashier";
 
             return PartialView("_Products",products);
+        }
+
+        public IActionResult GetProductPartial(int id)
+        {
+            var product = ProductsRepository.GetById(id);
+            return PartialView("_SellProduct", product);
         }
 
     }
