@@ -27,8 +27,8 @@
             <tbody>
                 @foreach (var product in Model)
                 {
-                    <tr class ="product-row">
-                        <td class="product-id">@product.Id</td>
+                    <tr class ="product-row" product-id="@product.Id">
+                        <td>@product.Id</td>
                         <td>@product.Name</td>
                         <td>$@product.Price.ToString("0.00")</td>
                         <td>@product.Quantity</td>
@@ -67,8 +67,8 @@ else
             <tbody>
                 @foreach (var product in Model)
                 {
-                    <tr class="product-row">
-                        <td class="product-id">@product.Id</td>
+                    <tr class="product-row" product-id="@product.Id">
+                        <td>@product.Id</td>
                         <td>@product.Name</td>
                         <td>£@product.Price.ToString("0.00")</td>
                         <td>@product.Quantity</td>

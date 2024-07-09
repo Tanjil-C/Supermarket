@@ -13,7 +13,7 @@
     <div class="col-4">
         @*Category Selection*@
         <select asp-for="SelectedCategoryId" class="form-control">
-            <option>-- Please Select --</option>
+            <option id="pleaseSelect">-- Please Select --</option>
             @if (Model.Categories != null && Model.Categories.Count() > 0)
             {
                 @foreach (var category in Model.Categories)
@@ -30,35 +30,60 @@
         <div id="productDetailsPartial">
             @*Product Details*@
         </div>
-        @*Sales Form*@
+        <form method="post" asp-controller="sales" asp-action="sell" id="formSale">
+            <input asp-for="SelectedProductId" type="hidden" />
+            <div class="form-group">
+                <label asp-for="QuantityToSell"></label>
+                <input asp-for="QuantityToSell" class="form-control" type="number" min="1" />
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Submit" />
+            </div>
+        </form>
     </div>
     <div class="col">
-
+        @*List of transactions *@
     </div>
 </div>
-
 
 @section Scripts {
     <script>
         $(function () {
+            $("#formSale").hide();
+            $("#QuantityToSell").val("");
+
             $("#SelectedCategoryId").on("change", function () {
-                var categoryId = $(this).val(); // Store the category ID in a variable
+
+                var categoryId = $(this).val();
                 $("#productsPartial").load("/products/ProductsByCategoryPartial", { categoryId: categoryId });
             });
-            // Handle product selection
 
             $("#productsPartial").on("click", ".product-row", function () {
                 $(".product-row").removeClass("highlight");
-                $(".product-row").on("change", function(){
-                    $("#productDetailsPartial").remove();
-                });
+
+                // Removing product details on any change in product rows
+                $("#productDetailsPartial").remove();
 
                 $(this).addClass("highlight");
 
-                var productId = $(this).find(".product-id").text(); 
-                $("#productDetailsPartial").load("/products/GetProductPartial", { id: productId });
+                // Convert productId to an integer
+                var productId = $(this).attr('product-id');
+
+                console.log(productId);
+
+                $("#productDetailsPartial").load("/Products/SellProductPartial", { productId: productId });
+
+                if (productId > 0) {
+                    $("#SelectedProductId").val(productId);
+                    $("#formSale").show();
+                    console.log("showing formsale");
+                } else {
+                    $("#SelectedProductId").val("");
+                    $("#formSale").hide();
+                }
+
             });
         });
-
     </script>
 }

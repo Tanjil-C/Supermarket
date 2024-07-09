@@ -13,5 +13,17 @@ namespace Supermarket.Controllers
             };
             return View(model);
         }
+
+        public IActionResult Sell(SalesViewModel salesViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                // sell product
+            }
+
+            // not valid, return to view
+
+            return View("Index", salesViewModel);
+        }
     }
 }

@@ -96,9 +96,10 @@ namespace Supermarket.Controllers
             return PartialView("_Products",products);
         }
 
-        public IActionResult GetProductPartial(int id)
+        [HttpGet]
+        public IActionResult SellProductPartial(int productId)
         {
-            var product = ProductsRepository.GetById(id);
+            var product = ProductsRepository.GetById(productId);
             return PartialView("_SellProduct", product);
         }
 
